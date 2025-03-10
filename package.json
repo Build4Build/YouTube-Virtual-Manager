@@ -1,0 +1,64 @@
+{
+  "name": "youtube-virtual-manager",
+  "version": "1.0.0",
+  "description": "AI-powered YouTube Channel Optimizer that helps manage, organize and optimize your channel to increase traffic and engagement",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:electron\" \"npm run dev:react\"",
+    "dev:electron": "tsc -p tsconfig.electron.json && electron .",
+    "dev:react": "vite",
+    "build": "npm run build:react && npm run build:electron",
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "build:react": "vite build",
+    "package": "electron-builder build --mac --win --linux --publish never",
+    "package:dir": "electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pH-7/YouTube-Virtual-Manager.git"
+  },
+  "keywords": [
+    "youtube",
+    "channel-optimizer",
+    "ai",
+    "electron",
+    "typescript",
+    "react"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pH-7/YouTube-Virtual-Manager/issues"
+  },
+  "homepage": "https://github.com/pH-7/YouTube-Virtual-Manager#readme",
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "electron": "^35.0.1",
+    "electron-builder": "^25.1.8",
+    "nodemon": "^3.1.9",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.1"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "axios": "^1.8.2",
+    "chart.js": "^4.4.8",
+    "dotenv": "^16.4.7",
+    "electron-store": "^10.0.1",
+    "google-auth-library": "^9.15.1",
+    "googleapis": "^146.0.0",
+    "openai": "^4.86.2",
+    "react": "^19.0.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.3.0",
+    "tailwindcss": "^4.0.12"
+  }
+}
