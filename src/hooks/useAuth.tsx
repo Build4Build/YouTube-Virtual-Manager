@@ -1,20 +1,23 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { authService } from '../services/authService';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
-  login: (credentials: any) => Promise<boolean>;
+  login: (redirectUrl?: string) => void;
   logout: () => void;
   user: any | null;
+  handleAuthCallback: (code: string) => Promise<boolean>;
 }
 
 // Create the auth context
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   loading: true,
-  login: async () => false,
+  login: () => {},
   logout: () => {},
   user: null,
+  handleAuthCallback: async () => false,
 });
 
 // Auth provider component
@@ -27,13 +30,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Check if there's a stored token
-        const token = await window.electronAPI.store.get('youtube_auth_token');
+        const isAuthed = authService.isAuthenticated();
         
-        if (token) {
-          // TODO: Validate token or refresh if needed
+        if (isAuthed) {
           setIsAuthenticated(true);
-          setUser({ token });
+          setUser(authService.getUser());
         }
       } catch (error) {
         console.error('Auth check failed:', error);
@@ -45,18 +46,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     checkAuth();
   }, []);
 
-  // Login function
-  const login = async (credentials: any): Promise<boolean> => {
+  // Redirect to OAuth login
+  const login = (redirectUrl?: string) => {
+    // Store the redirect URL if provided
+    if (redirectUrl) {
+      localStorage.setItem('auth_redirect', redirectUrl);
+    }
+    
+    // Get auth URL and redirect
+    const authUrl = authService.getAuthUrl();
+    window.location.href = authUrl;
+  };
+
+  // Handle OAuth callback
+  const handleAuthCallback = async (code: string): Promise<boolean> => {
     setLoading(true);
     try {
-      // Here you would implement OAuth2 flow with Google/YouTube
-      // For now, we'll just simulate a successful login
-      await window.electronAPI.store.set('youtube_auth_token', 'sample_token');
+      await authService.exchangeCodeForTokens(code);
       setIsAuthenticated(true);
-      setUser({ token: 'sample_token' });
+      setUser(authService.getUser());
+      
       return true;
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Auth callback failed:', error);
       return false;
     } finally {
       setLoading(false);
@@ -65,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Logout function
   const logout = () => {
-    window.electronAPI.store.set('youtube_auth_token', null);
+    authService.logout();
     setIsAuthenticated(false);
     setUser(null);
   };
@@ -78,6 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         logout,
         user,
+        handleAuthCallback,
       }}
     >
       {children}

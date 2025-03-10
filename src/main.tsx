@@ -4,6 +4,10 @@ import { HashRouter } from 'react-router-dom';
 import App from './App';
 import './styles/index.css';
 import { AuthProvider } from './hooks/useAuth';
+import { checkEnvironment } from './utils/environment';
+
+// Check environment variables
+checkEnvironment();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

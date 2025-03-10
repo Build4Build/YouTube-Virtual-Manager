@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
+import { authService } from './authService';
+import { env } from '../utils/environment';
 
 // Types
 interface YouTubeAuth {
@@ -32,34 +34,29 @@ interface VideoData {
 // YouTube API service
 class YouTubeService {
   private youtube: any;
-  private oauth2Client: OAuth2Client | null = null;
   
   constructor() {
     // Initialize with empty client
     this.youtube = null;
   }
   
-  // Initialize with auth tokens
-  public initialize(auth: YouTubeAuth): void {
-    // Create OAuth2 client
-    this.oauth2Client = new google.auth.OAuth2(
-      process.env.YOUTUBE_CLIENT_ID,
-      process.env.YOUTUBE_CLIENT_SECRET,
-      process.env.YOUTUBE_REDIRECT_URI
-    );
+  // Initialize YouTube API client with oauth2Client
+  private async initialize(): Promise<void> {
+    if (this.isInitialized()) return;
     
-    // Set credentials
-    this.oauth2Client.setCredentials({
-      access_token: auth.accessToken,
-      refresh_token: auth.refreshToken,
-      expiry_date: auth.expiryDate
-    });
-    
-    // Initialize YouTube API client
-    this.youtube = google.youtube({
-      version: 'v3',
-      auth: this.oauth2Client
-    });
+    try {
+      // Get OAuth2 client from auth service
+      const oauth2Client = await authService.getOAuth2Client();
+      
+      // Initialize YouTube API client
+      this.youtube = google.youtube({
+        version: 'v3',
+        auth: oauth2Client
+      });
+    } catch (error) {
+      console.error('Error initializing YouTube API client:', error);
+      throw error;
+    }
   }
   
   // Check if service is initialized
@@ -69,9 +66,7 @@ class YouTubeService {
   
   // Get channel statistics
   public async getChannelStats(): Promise<ChannelStats> {
-    if (!this.isInitialized()) {
-      throw new Error('YouTube service not initialized');
-    }
+    await this.initialize();
     
     try {
       // Get channel data
@@ -103,9 +98,7 @@ class YouTubeService {
   
   // Get recent videos
   public async getRecentVideos(maxResults: number = 10): Promise<VideoData[]> {
-    if (!this.isInitialized()) {
-      throw new Error('YouTube service not initialized');
-    }
+    await this.initialize();
     
     try {
       // Get videos from channel
@@ -145,9 +138,7 @@ class YouTubeService {
   
   // Get video analytics
   public async getVideoAnalytics(videoId: string): Promise<any> {
-    if (!this.isInitialized()) {
-      throw new Error('YouTube service not initialized');
-    }
+    await this.initialize();
     
     try {
       // In a real implementation, this would use the YouTube Analytics API
@@ -178,9 +169,7 @@ class YouTubeService {
   
   // Update video metadata (title, description, tags)
   public async updateVideo(videoId: string, data: Partial<VideoData>): Promise<boolean> {
-    if (!this.isInitialized()) {
-      throw new Error('YouTube service not initialized');
-    }
+    await this.initialize();
     
     try {
       // Get current video data

@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { env } from '../utils/environment';
 
 // Types
 interface KeywordSuggestion {
@@ -46,8 +47,10 @@ class AIService {
   private openai: OpenAI | null = null;
   
   constructor() {
-    // Initialize with empty client
-    this.openai = null;
+    // Initialize with API key if available
+    if (env.openaiApiKey) {
+      this.initialize(env.openaiApiKey);
+    }
   }
   
   // Initialize with API key
@@ -62,11 +65,20 @@ class AIService {
     return this.openai !== null;
   }
   
+  // Ensure API client is initialized
+  private ensureInitialized(): void {
+    if (!this.isInitialized()) {
+      if (env.openaiApiKey) {
+        this.initialize(env.openaiApiKey);
+      } else {
+        throw new Error('AI service not initialized and no API key available');
+      }
+    }
+  }
+  
   // Analyze and optimize keywords
   public async optimizeKeywords(keywords: string[]): Promise<KeywordSuggestion[]> {
-    if (!this.isInitialized()) {
-      throw new Error('AI service not initialized');
-    }
+    this.ensureInitialized();
     
     try {
       // In a real implementation, this would call the OpenAI API
@@ -120,9 +132,7 @@ class AIService {
   
   // Suggest better video titles
   public async suggestTitles(originalTitle: string, videoDescription: string): Promise<TitleSuggestion[]> {
-    if (!this.isInitialized()) {
-      throw new Error('AI service not initialized');
-    }
+    this.ensureInitialized();
     
     try {
       // In a real implementation, this would call the OpenAI API
@@ -170,9 +180,7 @@ class AIService {
   
   // Optimize video description
   public async optimizeDescription(originalDescription: string): Promise<DescriptionSuggestion> {
-    if (!this.isInitialized()) {
-      throw new Error('AI service not initialized');
-    }
+    this.ensureInitialized();
     
     try {
       // In a real implementation, this would call the OpenAI API
@@ -230,9 +238,7 @@ Website: https://example.com
   
   // Analyze thumbnail effectiveness
   public async analyzeThumbnail(thumbnailUrl: string): Promise<ThumbnailFeedback> {
-    if (!this.isInitialized()) {
-      throw new Error('AI service not initialized');
-    }
+    this.ensureInitialized();
     
     try {
       // In a real implementation, this would call the OpenAI API with vision capabilities
@@ -273,9 +279,7 @@ Website: https://example.com
   
   // Suggest optimal upload schedule
   public async suggestUploadSchedule(channelAnalytics: any): Promise<UploadScheduleSuggestion> {
-    if (!this.isInitialized()) {
-      throw new Error('AI service not initialized');
-    }
+    this.ensureInitialized();
     
     try {
       // In a real implementation, this would call the OpenAI API with channel analytics data
@@ -306,9 +310,7 @@ Website: https://example.com
   
   // Generate content ideas
   public async generateContentIdeas(channelTopic: string, recentVideos: string[]): Promise<ContentSuggestion[]> {
-    if (!this.isInitialized()) {
-      throw new Error('AI service not initialized');
-    }
+    this.ensureInitialized();
     
     try {
       // In a real implementation, this would call the OpenAI API

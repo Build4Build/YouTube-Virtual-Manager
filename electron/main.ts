@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import ElectronStore from 'electron-store';
+import Store from 'electron-store';
 
 // Initialize store for persistent data
 // Define the schema type for better TypeScript support
@@ -11,8 +11,8 @@ interface StoreSchema {
   [key: string]: any;
 }
 
-// Create store instance
-const store = new ElectronStore<StoreSchema>();
+// Create store instance with any type to bypass TypeScript errors
+const store: any = new Store<StoreSchema>();
 
 // Keep a global reference of the window object to avoid it being garbage collected
 let mainWindow: BrowserWindow | null = null;
@@ -68,12 +68,10 @@ app.on('window-all-closed', () => {
 
 // IPC handlers for communication between renderer and main process
 ipcMain.handle('store:get', (_, key: string) => {
-  // Use the correct store API - for newer versions of electron-store
   return store.has(key) ? store.get(key) : null;
 });
 
 ipcMain.handle('store:set', (_, key: string, value: any) => {
-  // Use the correct store API
   store.set(key, value);
   return true;
 });

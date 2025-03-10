@@ -1,27 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const Authentication: React.FC = () => {
-  const { login } = useAuth();
+  const { login, handleAuthCallback, isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Handle OAuth callback if code is in URL
+  useEffect(() => {
+    const handleCallback = async () => {
+      // Parse the URL for the authorization code
+      const searchParams = new URLSearchParams(location.search);
+      const code = searchParams.get('code');
+      
+      if (code) {
+        setIsLoading(true);
+        setError(null);
+        
+        try {
+          const success = await handleAuthCallback(code);
+          
+          if (success) {
+            // Check if there's a redirect URL stored
+            const redirectUrl = localStorage.getItem('auth_redirect');
+            localStorage.removeItem('auth_redirect'); // Clear it
+            
+            // Redirect to the stored URL or dashboard
+            navigate(redirectUrl || '/');
+          } else {
+            setError('Authentication failed. Please try again.');
+          }
+        } catch (err) {
+          setError('An unexpected error occurred. Please try again.');
+          console.error(err);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    
+    handleCallback();
+  }, [location, handleAuthCallback, navigate]);
+  
+  // If already authenticated, redirect to dashboard
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     setIsLoading(true);
     setError(null);
     
     try {
-      // For demonstration purposes, we're just passing empty credentials
-      // In a real implementation, this would handle the OAuth flow with Google/YouTube
-      const success = await login({});
-      
-      if (!success) {
-        setError('Authentication failed. Please try again.');
-      }
+      // This will redirect to Google's OAuth page
+      login();
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
       console.error(err);
-    } finally {
       setIsLoading(false);
     }
   };
