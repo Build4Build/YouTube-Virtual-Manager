@@ -77,24 +77,15 @@ The app provides:
 
 ## Who Built This Project?
 
-**Pierre-Henry Soria**, extremely **Passionate Data Scientist** who loves automating content creation efficiently with meaningful data! Also a true roquefort 🧀, ristretto ☕️, and dark chocolate lover! 😋
+**Pierre-Henry Soria**, extremely **passionate data scientist** who loves automating content creation efficiently with meaningful data! Also a true roquefort 🧀, ristretto ☕️, and dark chocolate lover! 😋
 
 Enthusiast of YouTube, AI, learning, and researching! Find me at [pH7.me](https://ph7.me)
 
-Do you enjoy this project? **[Buy me a coffee](https://ko-fi.com/phenry)** (spoiler: I love almond extra-hot flat white coffees).
+Do you enjoy this project? **[Buy me a coffee](https://ko-fi.com/phenry)** (psst! my favorite one is an extra-hot oat flat white coffee).
 
 [![Pierre-Henry Soria](https://s.gravatar.com/avatar/a210fe61253c43c869d71eaed0e90149?s=200)](https://ph7.me "Pierre-Henry Soria's personal website")
 
-[![@phenrysay][x-icon]](https://x.com/phenrysay "Follow Me on X") [![YouTube Tech Videos][youtube-icon]](https://www.youtube.com/@pH7Programming "My YouTube Tech Channel") [![pH-7][github-icon]](https://github.com/pH-7 "Follow Me on GitHub") [![BlueSky][bsky-icon]](https://bsky.app/profile/ph7.me "Follow Me on BlueSky")
-
-
-## Acknowledgments
-
-- YouTube Data API
-- OpenAI API
-- Electron community
-- React community
-
+[![@phenrysay][x-icon]](https://x.com/phenrysay "Follow Me on X") [![YouTube Tech Videos][youtube-icon]](https://www.youtube.com/@pH7Programming "My YouTube Tech Channel") [![pH-7][github-icon]](https://github.com/pH-7 "Follow Me on GitHub") [![BlueSky][bsky-icon]](https://bsky.app/profile/pierrehenry.dev "Follow Me on BlueSky")
 
 ## 📄 License
 
